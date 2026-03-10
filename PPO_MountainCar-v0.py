@@ -142,12 +142,22 @@ class PPO():
 
                 # ─── YOUR CODE HERE ──────────────────────────────────────────── #
                 # calculate the importance ratio
-
+                ratio = action_prob / old_action_log_prob[index]
+                surr1 = ratio * advantage
+                surr2 = torch.clamp(ratio, 1 - self.clip_param, 1 + self.clip_param) * advantage
+                actor_loss = -torch.min(surr1, surr2).mean()
                 # update actor network
-
+                self.actor_optimizer.zero_grad()
+                actor_loss.backward()
+                nn.utils.clip_grad_norm_(self.actor_net.parameters(), self.max_grad_norm)
+                self.actor_optimizer.step()
                 # update critic network
-
-                pass
+                critic_loss = F.mse_loss(Gt_index, V)
+                
+                self.critic_net_optimizer.zero_grad()
+                critic_loss.backward()
+                nn.utils.clip_grad_norm_(self.critic_net.parameters(), self.max_grad_norm)
+                self.critic_net_optimizer.step()
                 # ─────────────────────────────────────────────────────────────── #
 
                 self.training_step += 1
