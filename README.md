@@ -9,7 +9,7 @@ Actor network 負責輸出動作機率分佈，Critic network 則用來估計狀
 ## Requirements
 
 ```bash
-pip install torch gym tensorboardX numpy matplotlib
+import argparse pickle os time numpy matplotlib gym tensorboardX
 ```
 
 ## Run
